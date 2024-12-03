@@ -1,0 +1,58 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 50px;
+  background-color: #f0f8ff;
+}
+
+h1 {
+  color: #2c3e50;
+}
+
+#humidity {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #27ae60;
+}
+
+#humidityChart {
+  max-width: 800px; /* Largura máxima */
+  max-height: 600px; /* Altura máxima */
+  margin: 0 auto; /* Centraliza o gráfico horizontalmente */
+  display: inline !important; /* Substitui o display: block inline */
+}
+
+#status-indicator {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background-color: #28a745; /* Verde para online */
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  display: none; /* Inicialmente escondido */
+  z-index: 1000;
+}
+
+#status-indicator.error {
+  background-color: #dc3545; /* Vermelho para erro */
+}
+
+footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+#plant-icon {
+  width: 50px; /* Ajuste o tamanho do ícone */
+  height: auto;
+  opacity: 0.8; /* Deixe o ícone levemente translúcido */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#plant-icon:hover {
+  transform: scale(1.2); /* Aumenta o ícone ao passar o mouse */
+  opacity: 1; /* Torna o ícone totalmente opaco ao passar o mouse */
+}
