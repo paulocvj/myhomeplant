@@ -1,3 +1,7 @@
+# ---------------------------------------------------
+#                     WIP
+# ---------------------------------------------------
+
 # Variáveis de configuração
 INSTALL_DIR=/home/pi/plant-monitor
 SCRIPT_NAME=humidity_sender.sh
