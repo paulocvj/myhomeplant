@@ -98,4 +98,4 @@ plant-monitor/
 ---
 
 ## **License**
-This project is licensed under the [Apache License](LICENSE).
+This project is licensed under the [GPL-3.0 license](LICENSE).
