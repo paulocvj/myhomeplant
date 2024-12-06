@@ -44,7 +44,7 @@ crontab -e
 ```
 Inside crontab paste the following line at the end of file:
 ```
-@reboot /PATH/TO/YOUR/FOLDER/myhomeplant/embedded/humidity_handler/humidity_sender_ino.py &
+@reboot /PATH/TO/YOUR/FOLDER/myhomeplant/embedded/rpi/scripts/post_handler.py &
 ```
 
 ---
