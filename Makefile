@@ -1,54 +1,38 @@
-# Variáveis de configuração
-INSTALL_DIR=/home/pi/plant-monitor
-SCRIPT_NAME=humidity_sender.sh
-SERVER_SCRIPT=server.js
-FRONTEND_DIR=frontend
-CRONJOB="@reboot node $(INSTALL_DIR)/$(SERVER_SCRIPT) &"
+# ---------------------------------------------------
+#                     WIP
+# ---------------------------------------------------
 
-# Porta do servidor
+SERVER_DIR := server
+SERVER_MAIN := server.js
+SENDER := client/humidity_handler/scripts/humidity_sender.sh
 PORT=3000
+# SERVER_SCRIPT=server.js
+# FRONTEND_DIR=frontend
+# CRONJOB="@reboot node $(INSTALL_DIR)/$(SERVER_SCRIPT) &"
 
 # Default target
 all: install
 
 # Alvo de instalação
-install:
+config:
 	@echo "Atualizando sistema..."
 	sudo apt update
 	sudo apt install -y curl sqlite3 nodejs npm build-essential
 
-	@echo "Criando diretório para o projeto..."
-	mkdir -p $(INSTALL_DIR)
-
-	@echo "Copiando arquivos do projeto..."
-	cp -r ./* $(INSTALL_DIR)
-	chmod +x $(INSTALL_DIR)/$(SCRIPT_NAME)
-
-	@echo "Inicializando projeto Node.js..."
-	cd $(INSTALL_DIR) && npm install
-
-	@echo "Configurando banco de dados SQLite..."
-	sqlite3 $(INSTALL_DIR)/humidity.db "CREATE TABLE IF NOT EXISTS humidity_logs (id INTEGER PRIMARY KEY AUTOINCREMENT, humidity REAL NOT NULL, timestamp DATETIME DEFAULT (DATETIME('now', '-3 hours')));"
-
-	@echo "Configurando crontab para iniciar o servidor no boot..."
-	(crontab -l 2>/dev/null; echo "$(CRONJOB)") | crontab -
+	# @echo "Configurando crontab para iniciar o servidor no boot..."
+	# (crontab -l 2>/dev/null; echo "$(CRONJOB)") | crontab -
 
 	@echo "Instalação concluída com sucesso!"
 
-# Inicializar o servidor manualmente
-start-server:
-	@echo "Iniciando servidor manualmente na porta $(PORT)..."
-	cd $(INSTALL_DIR) && node $(SERVER_SCRIPT)
+# Comando para instalar as dependências
+install:
+	@echo "Instalando dependências..."
+	npm install
 
-# Remover o projeto
-uninstall:
-	@echo "Removendo projeto..."
-	rm -rf $(INSTALL_DIR)
-
-	@echo "Removendo entrada do crontab..."
-	crontab -l | grep -v "node $(INSTALL_DIR)/$(SERVER_SCRIPT)" | crontab -
-
-	@echo "Projeto removido com sucesso!"
+# Comando para iniciar o servidor
+start:
+	@echo "Iniciando o servidor..."
+	node $(SERVER_DIR)/$(SERVER_MAIN)
 
 # Testar envio de dados
 test-curl:
@@ -60,4 +44,9 @@ test-curl:
 # Testar script de envio contínuo
 test-sender:
 	@echo "Testando script de envio de umidade..."
-	bash $(INSTALL_DIR)/$(SCRIPT_NAME)
+	bash $(SENDER)
+
+# Comando para instalar dependências e iniciar o servidor
+run: install start
+
+.PHONY: install start

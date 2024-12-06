@@ -50,3 +50,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# proj files
+humidity.db
+node_modules/
+package-lock.json
+server/logs/
