@@ -99,5 +99,9 @@ plant-monitor/
 
 ---
 
+## **Application Diagram**
+
+![Diagram](docs/diagram.drawio.png)
+
 ## **License**
 This project is licensed under the [GPL-3.0 license](LICENSE).
