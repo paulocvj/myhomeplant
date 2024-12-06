@@ -1,7 +1,7 @@
 
 # **Embedded Guide**
 
-In this file we will go through the process of setting up the hardware.
+In this file we will go through the process of setting up the hardware. I know Arduino isn't the best option but it's the fastest/easiest one I have at the moment. You can replace the Arduino with a simple A/D converter with I2C pins if you wish, or even with a Esp32 if you're into overkilling a home project.
 
 ## **Prerequisites**
 - **Hardware**:
