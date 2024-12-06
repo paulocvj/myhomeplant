@@ -11,7 +11,7 @@ PORT=3000
 # CRONJOB="@reboot node $(INSTALL_DIR)/$(SERVER_SCRIPT) &"
 
 # Default target
-all: install
+all: config install start
 
 # Alvo de instalação
 config:
@@ -49,4 +49,4 @@ test-sender:
 # Comando para instalar dependências e iniciar o servidor
 run: install start
 
-.PHONY: install start
+.PHONY: config install start
