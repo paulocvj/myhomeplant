@@ -10,8 +10,8 @@
 #include "driver/adc.h"
 #include "driver/gpio.h"
 
-#define WIFI_SSID "Pandora_2G"
-#define WIFI_PASS "sol2609!"
+#include "wifi_credentials.h"
+
 #define SENSOR_POWER_PIN GPIO_NUM_5
 #define ADC_CHANNEL ADC1_CHANNEL_0
 
