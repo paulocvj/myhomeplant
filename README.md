@@ -10,6 +10,10 @@ The **Plant Monitor** is an IoT project to monitor soil moisture for plants. It 
 - Simple web interface for data visualization.
 - A data-sending script configured to run on a Raspberry Pi Zero W.
 
+### **Considerations**
+You can run the full application using only the RPi. That's a future upgrade for this project. Server is currently running inside a NAS.
+
+
 ## **Features**
 - Stores and displays the most recent moisture data sent by the sensor.
 - Real-time chart updates on the interface using WebSocket.
