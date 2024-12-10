@@ -8,9 +8,12 @@
 #include "nvs_flash.h"
 #include "esp_http_client.h"
 #include "driver/adc.h"
+#include "driver/gpio.h"
 
 #define WIFI_SSID "Pandora_2G"
 #define WIFI_PASS "sol2609!"
+#define SENSOR_POWER_PIN GPIO_NUM_5 // GPIO D1 (defina de acordo com sua placa)
+#define ADC_CHANNEL ADC1_CHANNEL_0 // Canal ADC correspondente (verifique no datasheet)
 
 static const char *TAG = "wifi_station";
 
@@ -56,9 +59,14 @@ void send_humidity_post(float humidity) {
     esp_http_client_cleanup(client);
 }
 
-// Tarefa para ler o ADC e enviar POST periodicamente
-void adc_task(void *pvParameters) {
+// Tarefa para controlar o sensor, ler o ADC e enviar POST periodicamente
+void sensor_task(void *pvParameters) {
     while (1) {
+        // Liga o sensor
+        gpio_set_level(SENSOR_POWER_PIN, 1);
+        ESP_LOGI(TAG, "Sensor ligado.");
+        vTaskDelay(pdMS_TO_TICKS(2000)); // Aguarde 2 segundos para estabilizar
+
         uint16_t adc_value = 0;
         // Leia o valor do ADC
         esp_err_t adc_read_status = adc_read(&adc_value);
@@ -70,7 +78,11 @@ void adc_task(void *pvParameters) {
         } else {
             ESP_LOGE(TAG, "Erro ao ler o ADC: %s", esp_err_to_name(adc_read_status));
         }
-        vTaskDelay(pdMS_TO_TICKS(120000)); // Aguarde 120 segundos
+
+        // Desliga o sensor
+        gpio_set_level(SENSOR_POWER_PIN, 0);
+        ESP_LOGI(TAG, "Sensor desligado.");
+        vTaskDelay(pdMS_TO_TICKS(120000)); // Aguarde 2 minutos antes da próxima medição
     }
 }
 
@@ -88,6 +100,20 @@ void init_adc() {
     }
 }
 
+// Inicializa o GPIO para controlar o sensor
+void init_gpio() {
+    gpio_config_t io_conf = {
+        .pin_bit_mask = (1ULL << SENSOR_POWER_PIN),
+        .mode = GPIO_MODE_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE
+    };
+    gpio_config(&io_conf);
+    gpio_set_level(SENSOR_POWER_PIN, 0); // Inicialmente desligado
+    ESP_LOGI(TAG, "GPIO para controle do sensor inicializado.");
+}
+
 // Manipulador de eventos Wi-Fi
 static esp_err_t event_handler(void *ctx, system_event_t *event) {
     switch (event->event_id) {
@@ -99,8 +125,8 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
                  ip4addr_ntoa(&event->event_info.got_ip.ip_info.ip));
         xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
 
-        // Inicia a tarefa de leitura do ADC após conexão
-        xTaskCreate(adc_task, "adc_task", 4096, NULL, 5, NULL);
+        // Inicia a tarefa de leitura do sensor após conexão
+        xTaskCreate(sensor_task, "sensor_task", 4096, NULL, 5, NULL);
         break;
     case SYSTEM_EVENT_STA_DISCONNECTED:
         ESP_LOGI(TAG, "Desconectado. Reconectando...");
@@ -140,6 +166,7 @@ void wifi_init_sta() {
 void app_main() {
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
-    init_adc();
+    init_gpio(); // Inicializa o GPIO para controle do sensor
+    init_adc(); // Inicializa o ADC
     wifi_init_sta();
 }
