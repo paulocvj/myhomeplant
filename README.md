@@ -1,36 +1,55 @@
 
+
 # **Plant Monitor**
 
-A simple system for soil moisture monitoring, designed to run on a server and send sensor data via Raspberry Pi Zero W.
+A flexible system for soil moisture monitoring, designed to work in local networks or adapt to more advanced use cases with different hardware configurations.
+
+---
 
 ## **Description**
-The **Plant Monitor** is an IoT project to monitor soil moisture for plants. It includes:
-- A Node.js server with WebSocket for real-time communication.
-- SQLite database to store moisture data.
-- Simple web interface for data visualization.
-- A data-sending script configured to run on a Raspberry Pi Zero W.
+The **Plant Monitor** is an IoT project for monitoring plant soil moisture, with two main implementation options:
 
-### **Considerations**
-You can run the full application using only the RPi. That's a future upgrade for this project. Server is currently running inside a NAS.
+1. **Setup with Raspberry Pi Zero W (or similar) + Arduino or ADC**:
+   - Ideal for those looking to expand the project in the future, using the RPi Zero W as a gateway.
+   - In future iterations, it could be feasible to connect a LoRa antenna to the RPi Zero W for long-range communication, filtering the received data before sending it to the server.
 
+2. **Setup with NodeMCU ESP8266**:
+   - If you have direct access to the network where the server is hosted, you can use just the ESP along with the moisture sensor for direct communication.
+
+Additionally, the system supports running the server directly on the Raspberry Pi Zero W, making it a standalone solution if desired.
+
+For the current use case, the system is designed to operate within a local network. However, when used outside of the home network, the Raspberry Pi Zero W can send data via Tailscale for secure remote communication.
+
+---
 
 ## **Features**
-- Stores and displays the most recent moisture data sent by the sensor.
-- Real-time chart updates on the interface using WebSocket.
+- **Flexible Hardware Configurations**:
+  - Raspberry Pi Zero W as a gateway or standalone server.
+  - NodeMCU ESP8266 for direct communication.
+- **Future Expandability**:
+  - LoRa antenna support for long-range data collection.
+- **Local and Remote Operation**:
+  - Tailscale support for secure remote data transmission.
+- Real-time data visualization via a web interface.
 - Structured logs for debugging and monitoring.
 
 ---
 
 ## **Prerequisites**
-- **Hardware**:
+### **Hardware**:
+- **Option 1**:
   - Raspberry Pi Zero W (or similar).
-  - Arduino (Nano or Uno or similar).
+  - Arduino (Nano, Uno, or similar) or ADC.
   - Soil moisture sensor.
-- **Software**:
-  - Node.js (>= v18.0).
-  - SQLite3.
-  - Bash (for scripts).
-  - `npm` to manage dependencies.
+- **Option 2**:
+  - NodeMCU ESP8266.
+  - Soil moisture sensor.
+
+### **Software**:
+- Node.js (>= v18.0).
+- SQLite3.
+- Bash (for scripts).
+- `npm` to manage dependencies.
 
 ---
 
@@ -50,7 +69,6 @@ make config
 ### 3. Configure the Data Sending Script
 Ensure the `humidity_sender.sh` script is properly configured to send data to the server:
 ```bash
-#!/bin/bash
 SERVER_URL="http://<your-server>:3000/api/humidity"
 ```
 
@@ -78,34 +96,22 @@ make test-sender
 ---
 
 ## **Project Structure**
-
 ```plaintext
 plant-monitor/
 ├── server.js          # Node.js server
 ├── logger.js          # Logging system
 ├── Makefile           # Project automation
-├── humidity_sender.sh # Raspberry Pi data-sending script
+├── humidity_sender.sh # Data-sending script
 ├── frontend/
 │   ├── index.html     # Web interface
 │   ├── styles.css     # Interface styles
 │   └── script.js      # Frontend logic
 ```
 
----
-
-## **How It Works**
-1. The soil moisture sensor sends data to the analog input of the Arduino.
-2. The Arduino sends the data through the serial ports to the Raspberry Pi.
-3. The Raspberry Pi sends soil moisture data every 2 minutes via a `POST` request.
-4. The server stores the data in a SQLite database.
-5. The server uses WebSocket to notify connected clients of new data.
-6. The web interface updates the real-time chart dynamically.
-
----
 
 ## **Application Diagram**
 
-![Diagram](docs/diagram.drawio.png)
+![Diagram](docs/plant-monitor.drawio.png)
 
 ## **License**
 This project is licensed under the [GPL-3.0 license](LICENSE).
